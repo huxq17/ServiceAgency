@@ -1,0 +1,34 @@
+apply plugin: 'groovy'
+apply plugin: 'maven'
+
+
+dependencies {
+    //gradle sdk
+    compile gradleApi()
+    //groovy sdk
+    compile localGroovy()
+
+//    compile 'com.android.tools.build:transform-api:1.5.0'
+    compile 'org.javassist:javassist:3.20.0-GA'
+    compile 'commons-io:commons-io:2.5'
+    compile 'com.android.tools.build:gradle:3.0.1'
+    compile 'com.squareup:javapoet:1.7.0'
+    compile 'com.buyi.huxq17:serviceagency:1.0.0'
+}
+
+//group和version
+group='com.buyi.huxq17'
+version='1.0.0'
+//打包到本地或者远程Maven库
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            //提交到远程服务器：
+            // repository(url: "http://www.xxx.com/repos") {
+            //    authentication(userName: "admin", password: "admin")
+            // }
+            //本地的Maven地址设置为E:/Maven
+            repository(url: uri('E:/repo'))
+        }
+    }
+}
