@@ -7,6 +7,7 @@ import com.squareup.javapoet.MethodSpec
 import com.squareup.javapoet.TypeSpec
 import javassist.ClassPool
 import javassist.CtClass
+import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
 
 import javax.lang.model.element.Modifier
@@ -48,7 +49,7 @@ public class ServiceConfig {
 
     boolean isService(CtClass clazz) {
         Object[] annotations = clazz.getAnnotations()
-        println "annotation.length="+annotations.length
+        println "annotation.length=" + annotations.length
         if (annotations.any { annotation -> (annotation.toString() == SERVICE_AGENT_NAME) }) {
             return true
         }
@@ -57,13 +58,11 @@ public class ServiceConfig {
 
     void commit() {
         String packageName = ServiceAgency.class.package.name
-        String className = "${packageName.replaceAll("\\.", "/")}/${SERVICE_CONFIG}.class"
-        def configClass = new File(transform.classOutputDir, className)
-        def result = configClass.delete()
-        println "delete output path=${configClass.absolutePath}," +
-                "exists = ${configClass.exists()},delteresult=$result,contentList.size()=${contentList.size()}"
         if (contentList.size() == 0) {
+            transform.classOutputDir.delete()
             return
+        }else{
+            transform.classOutputDir.mkdirs()
         }
         TypeSpec.Builder enmuBuild = TypeSpec.enumBuilder(SERVICE_CONFIG)
                 .addModifiers(Modifier.PUBLIC)
@@ -78,14 +77,14 @@ public class ServiceConfig {
                 .build())
                 .build()
 
-
         def sourceDir = transform.sourceDir
         String fileName = "${packageName.replaceAll("\\.", "/")}/${SERVICE_CONFIG}.java"
         File sourceFile = new File(sourceDir, fileName)
         JavaFile javaFile = JavaFile.builder(packageName, enmuType)
                 .build()
         javaFile.writeTo(sourceDir)
-        JavaCompilerUtil.CompilerJavaFile(sourceFile, transform.classOutputDir)
+        JavaCompilerUtil.CompilerJavaFile(sourceFile, transform.classOutputDir.absolutePath)
+        FileUtils.deleteDirectory(new File(sourceDir, "com/buyi/"))
         contentList.clear()
     }
 }

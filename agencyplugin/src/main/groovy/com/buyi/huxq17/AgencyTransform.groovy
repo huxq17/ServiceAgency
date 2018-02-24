@@ -6,7 +6,7 @@ import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
 
-public class AgencyTransform extends Transform {
+class AgencyTransform extends Transform {
     private Project mProject
     private ServiceConfig serviceConfig
     private File sourceDir
@@ -15,48 +15,51 @@ public class AgencyTransform extends Transform {
         return sourceDir
     }
 
-    public AgencyTransform(Project project) {
+    AgencyTransform(Project project) {
         mProject = project
     }
 
     @Override
-    public String getName() {
+    String getName() {
         return "AgencyTransform"
     }
 
     @Override
-    public Set<QualifiedContent.ContentType> getInputTypes() {
+    Set<QualifiedContent.ContentType> getInputTypes() {
         return TransformManager.CONTENT_CLASS
     }
 
     @Override
-    public Set<QualifiedContent.Scope> getScopes() {
+    Set<QualifiedContent.Scope> getScopes() {
         return TransformManager.SCOPE_FULL_PROJECT
     }
 
     @Override
-    public boolean isIncremental() {
+    boolean isIncremental() {
         return false
     }
-    String classOutputDir
+    File classOutputDir
 
-    public void transform(TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
+    void transform(TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
         Context context = transformInvocation.getContext()
         initServiceConfig(context.variantName)
         Collection<TransformInput> inputs = transformInvocation.getInputs()
         Collection<TransformInput> referencedInputs = transformInvocation.getReferencedInputs()
         TransformOutputProvider outputProvider = transformInvocation.getOutputProvider()
+        File meta_file = outputProvider.getContentLocation("serviceagency", getOutputTypes(), getScopes(), Format.DIRECTORY)
+        classOutputDir = meta_file
+        if (meta_file.exists()) {
+            FileUtils.deleteDirectory(meta_file)
+        }
         // Transform的inputs有两种类型，一种是目录，一种是jar包，要分开遍历
         inputs.each { TransformInput input ->
             input.directoryInputs.each { DirectoryInput directoryInput ->
                 //文件夹里面包含的是我们手写的类以及R.class、BuildConfig.class以及R$XXX.class等
-                classOutputDir = directoryInput.file.absolutePath
-                println "classOutputDir=$classOutputDir"
-                updateServiceConfig(classOutputDir)
+                println "classOutputDir=$classOutputDir;$directoryInput.name"
+                updateServiceConfig(directoryInput.file.absolutePath)
                 def dest = outputProvider.getContentLocation(directoryInput.name,
                         directoryInput.contentTypes, directoryInput.scopes,
                         Format.DIRECTORY)
-
                 FileUtils.copyDirectory(directoryInput.file, dest)
             }
             input.jarInputs.each { JarInput jarInput ->
