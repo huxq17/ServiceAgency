@@ -24,6 +24,7 @@ public class ServiceAgency {
                     if (tClass.isAssignableFrom(serviceClass)) {
                         service = ReflectUtil.newInstance((Class<T>) serviceClass);
                         cacheMap.put(tClass, service);
+                        return service;
                     }
                 } catch (ClassNotFoundException e) {
                     throw new AgencyException(e);
@@ -31,8 +32,8 @@ public class ServiceAgency {
             }
         } else {
         }
-        if(service==null){
-            throw new AgencyException("No class implements "+tClass.getName()+" and annotate with ServiceAgent.");
+        if (service == null) {
+            throw new AgencyException("No class implements " + tClass.getName() + " and annotated with ServiceAgent.");
         }
         return service;
     }

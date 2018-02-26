@@ -1,1 +1,1 @@
-include ':app', ':agencyplugin', ':serviceagency'
+include ':app', ':serviceagency', ':agencyplugin'

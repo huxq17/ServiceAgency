@@ -1,0 +1,63 @@
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
+
+install {
+    repositories {
+        mavenInstaller {
+            pom.project {
+                name POM_NAME
+                url GIT_URL
+
+                licenses {
+                    license {
+                        name POM_LICENCE_NAME
+                        url POM_LICENCE_URL
+                    }
+                }
+                developers {
+                    developer {
+                        name POM_DEVELOPER_NAME
+                        email POM_DEVELOPER_EMAIL
+                    }
+                }
+                scm {
+                    connection POM_SCM_CONNECTION
+                    developerConnection POM_SCM_DEV_CONNECTION
+                    url POM_SCM_URL
+                }
+            }
+        }
+
+    }
+}
+bintray {
+    Properties properties = new Properties()
+    File propertyFile = new File(rootDir.getAbsolutePath() + "/local.properties")
+    properties.load(propertyFile.newDataInputStream())
+
+    user = getBintrayUserProperty(properties)
+    key = getBintrayApiKeyProperty(properties)
+
+    configurations = ['archives']
+    pkg {
+        repo = 'maven'
+        name = project.name
+        desc = POM_DESCRIPTION
+        websiteUrl = GIT_URL
+        issueTrackerUrl = ISSUE_URL
+        vcsUrl = GIT_URL
+        labels = bintray_labels
+        licenses = ['Apache-2.0']
+        publish = true
+    }
+}
+
+def getBintrayUserProperty(Properties properties) {
+    return properties.get('BINTRAY_USER', "")
+//    return hasProperty('BINTRAY_USER') ? BINTRAY_USER : ""
+}
+
+def getBintrayApiKeyProperty(Properties properties) {
+    return properties.get('BINTRAY_APIKEY', "")
+//    return hasProperty('BINTRAY_APIKEY') ? BINTRAY_APIKEY : ""
+}

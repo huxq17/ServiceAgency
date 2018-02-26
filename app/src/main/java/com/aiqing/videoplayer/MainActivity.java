@@ -23,8 +23,8 @@ public class MainActivity extends AppCompatActivity {
                 , JZVideoPlayerStandard.SCREEN_WINDOW_NORMAL, "");
 //        player.setUp();
 //        jzVideoPlayerStandard.thumbImageView.setImage("http://p.qpic.cn/videoyun/0/2449_43b6f696980311e59ed467f22794e792_1/640");
-        IService service = ServiceAgency.getService(IService.class);
-        service.init(this);
+        NetworkSevice service = ServiceAgency.getService(NetworkSevice.class);
+        service.get("https://www.baidu.com");
     }
 
     /**

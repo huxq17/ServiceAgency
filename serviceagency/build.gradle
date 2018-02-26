@@ -10,22 +10,26 @@ jar {
 //        attributes 'Artifact-Id': project.name
 //        attributes 'Version': project.version
 //    }
-    exclude{
-        it.name=="ServiceConfig.class"
+    exclude {
+        it.name == "ServiceConfig.class"
     }
 }
 group = 'com.buyi.huxq17'
 version = '1.0.0'
 //打包到本地或者远程Maven库
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            //提交到远程服务器：
-            // repository(url: "http://www.xxx.com/repos") {
-            //    authentication(userName: "admin", password: "admin")
-            // }
-            //本地的Maven地址设置为E:/Maven
-            repository(url: uri('E:/repo'))
-        }
-    }
+//uploadArchives {
+//    repositories {
+//        mavenDeployer {
+//            //提交到远程服务器：
+//            // repository(url: "http://www.xxx.com/repos") {
+//            //    authentication(userName: "admin", password: "admin")
+//            // }
+//            //本地的Maven地址设置为E:/Maven
+//            repository(url: uri('E:/repo'))
+//        }
+//    }
+//}
+ext {
+    bintray_labels = ['java', 'jar']
 }
+apply from: '../bintray-plugin-upload.gradle'
