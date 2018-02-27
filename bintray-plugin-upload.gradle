@@ -30,6 +30,20 @@ install {
 
     }
 }
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
 bintray {
     Properties properties = new Properties()
     File propertyFile = new File(rootDir.getAbsolutePath() + "/local.properties")
@@ -54,10 +68,8 @@ bintray {
 
 def getBintrayUserProperty(Properties properties) {
     return properties.get('BINTRAY_USER', "")
-//    return hasProperty('BINTRAY_USER') ? BINTRAY_USER : ""
 }
 
 def getBintrayApiKeyProperty(Properties properties) {
     return properties.get('BINTRAY_APIKEY', "")
-//    return hasProperty('BINTRAY_APIKEY') ? BINTRAY_APIKEY : ""
 }

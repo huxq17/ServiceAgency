@@ -7,7 +7,6 @@ import org.gradle.api.Project
 public class AgencyPlugin implements Plugin<Project> {
 
     void apply(Project project) {
-        //AppExtension就是build.gradle中android{...}这一块
         def android = project.extensions.getByType(AppExtension)
         def agencyTransform = new AgencyTransform(project)
         android.registerTransform(agencyTransform)

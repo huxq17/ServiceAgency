@@ -51,10 +51,8 @@ class AgencyTransform extends Transform {
         if (meta_file.exists()) {
             FileUtils.deleteDirectory(meta_file)
         }
-        // Transform的inputs有两种类型，一种是目录，一种是jar包，要分开遍历
         inputs.each { TransformInput input ->
             input.directoryInputs.each { DirectoryInput directoryInput ->
-                //文件夹里面包含的是我们手写的类以及R.class、BuildConfig.class以及R$XXX.class等
                 println "classOutputDir=$classOutputDir;$directoryInput.name"
                 updateServiceConfig(directoryInput.file.absolutePath)
                 def dest = outputProvider.getContentLocation(directoryInput.name,
@@ -63,8 +61,6 @@ class AgencyTransform extends Transform {
                 FileUtils.copyDirectory(directoryInput.file, dest)
             }
             input.jarInputs.each { JarInput jarInput ->
-                //jar文件一般是第三方依赖库jar文件
-                // 重命名输出文件（同目录copyFile会冲突）
                 def jarName = jarInput.name
                 def md5Name = DigestUtils.md5Hex(jarInput.file.getAbsolutePath())
                 if (jarName.endsWith(".jar")) {

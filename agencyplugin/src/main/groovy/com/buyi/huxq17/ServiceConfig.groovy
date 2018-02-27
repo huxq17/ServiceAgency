@@ -61,7 +61,7 @@ public class ServiceConfig {
         if (contentList.size() == 0) {
             transform.classOutputDir.delete()
             return
-        }else{
+        } else {
             transform.classOutputDir.mkdirs()
         }
         TypeSpec.Builder enmuBuild = TypeSpec.enumBuilder(SERVICE_CONFIG)
@@ -80,8 +80,7 @@ public class ServiceConfig {
         def sourceDir = transform.sourceDir
         String fileName = "${packageName.replaceAll("\\.", "/")}/${SERVICE_CONFIG}.java"
         File sourceFile = new File(sourceDir, fileName)
-        JavaFile javaFile = JavaFile.builder(packageName, enmuType)
-                .build()
+        JavaFile javaFile = JavaFile.builder(packageName, enmuType).build()
         javaFile.writeTo(sourceDir)
         JavaCompilerUtil.CompilerJavaFile(sourceFile, transform.classOutputDir.absolutePath)
         FileUtils.deleteDirectory(new File(sourceDir, "com/buyi/"))
