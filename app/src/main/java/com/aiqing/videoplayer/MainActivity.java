@@ -1,18 +1,16 @@
 package com.aiqing.videoplayer;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 
 import com.buyi.huxq17.serviceagency.ServiceAgency;
+import com.taobao.weex.WXSDKInstance;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import cn.jzvd.JZVideoPlayerStandard;
 
-public class MainActivity extends AppCompatActivity {
-
-    // Used to load the 'native-lib' library on application startup.
-    static {
-        System.loadLibrary("native-lib");
-    }
+public class MainActivity extends WeexActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,13 +21,19 @@ public class MainActivity extends AppCompatActivity {
                 , JZVideoPlayerStandard.SCREEN_WINDOW_NORMAL, "");
 //        player.setUp();
 //        jzVideoPlayerStandard.thumbImageView.setImage("http://p.qpic.cn/videoyun/0/2449_43b6f696980311e59ed467f22794e792_1/640");
-        NetworkSevice service = ServiceAgency.getService(NetworkSevice.class);
+        NetworkService service = ServiceAgency.getService(NetworkService.class);
         service.get("https://www.baidu.com");
     }
 
-    /**
-     * A native method that is implemented by the 'native-lib' native library,
-     * which is packaged with this application.
-     */
-    public native String stringFromJNI();
+    @Override
+    public String getPath() {
+        return "dist/index.js";
+    }
+
+    @Override
+    public Map<String, Object> getOptions() {
+        Map<String, Object> options = new HashMap<>();
+        options.put(WXSDKInstance.BUNDLE_URL, "file://hello.js");
+        return null;
+    }
 }

@@ -3,6 +3,9 @@
 buildscript {
 
     repositories {
+        maven {
+            url 'E:/repo'
+        }
         jcenter()
         google()
     }
@@ -18,6 +21,9 @@ buildscript {
 
 allprojects {
     repositories {
+        maven {
+            url 'E:/repo'
+        }
         mavenLocal()
         google()
         jcenter()

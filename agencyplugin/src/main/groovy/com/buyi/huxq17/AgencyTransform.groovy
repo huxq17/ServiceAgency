@@ -6,6 +6,9 @@ import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
 
+import java.util.jar.JarEntry
+import java.util.jar.JarFile
+
 class AgencyTransform extends Transform {
     private Project mProject
     private ServiceConfig serviceConfig
@@ -38,6 +41,7 @@ class AgencyTransform extends Transform {
     boolean isIncremental() {
         return false
     }
+
     File classOutputDir
 
     void transform(TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
@@ -46,15 +50,14 @@ class AgencyTransform extends Transform {
         Collection<TransformInput> inputs = transformInvocation.getInputs()
         Collection<TransformInput> referencedInputs = transformInvocation.getReferencedInputs()
         TransformOutputProvider outputProvider = transformInvocation.getOutputProvider()
-        File meta_file = outputProvider.getContentLocation("serviceagency", getOutputTypes(), getScopes(), Format.DIRECTORY)
-        classOutputDir = meta_file
-        if (meta_file.exists()) {
-            FileUtils.deleteDirectory(meta_file)
+        classOutputDir = outputProvider.getContentLocation("serviceagency", getOutputTypes(), getScopes(), Format.DIRECTORY)
+        if (classOutputDir.exists()) {
+            FileUtils.deleteDirectory(classOutputDir)
         }
         inputs.each { TransformInput input ->
             input.directoryInputs.each { DirectoryInput directoryInput ->
                 println "classOutputDir=$classOutputDir;$directoryInput.name"
-                updateServiceConfig(directoryInput.file.absolutePath)
+                loadDirectory(directoryInput.file.absolutePath)
                 def dest = outputProvider.getContentLocation(directoryInput.name,
                         directoryInput.contentTypes, directoryInput.scopes,
                         Format.DIRECTORY)
@@ -66,11 +69,13 @@ class AgencyTransform extends Transform {
                 if (jarName.endsWith(".jar")) {
                     jarName = jarName.substring(0, jarName.length() - 4)
                 }
+                loadJar(jarInput.file)
                 def dest = outputProvider.getContentLocation(jarName + md5Name,
                         jarInput.contentTypes, jarInput.scopes, Format.JAR)
                 FileUtils.copyFile(jarInput.file, dest)
             }
         }
+
         serviceConfig.commit()
     }
 
@@ -91,21 +96,39 @@ class AgencyTransform extends Transform {
         }
     }
 
-    void updateServiceConfig(String path) {
+    void loadJar(File jar) {
+        serviceConfig.addClassPath(jar.absolutePath)
+        JarFile jarFile = new JarFile(jar)
+        Enumeration<JarEntry> entries = jarFile.entries()
+        while (entries.hasMoreElements()) {
+            JarEntry entry = entries.nextElement()
+            String fileName = entry.name
+            if (isArtifactClass(fileName)) {
+                InputStream classfile = jarFile.getInputStream(entry)
+                serviceConfig.update(fileName, classfile)
+            }
+        }
+    }
+
+    void loadDirectory(String path) {
         File dir = new File(path)
         serviceConfig.addClassPath(path)
         if (dir.isDirectory()) {
             dir.eachFileRecurse { File file ->
                 String filePath = file.absolutePath
-                if (filePath.endsWith(".class")
-                        && !filePath.contains('R$')
-                        && !filePath.contains('R.class')
-                        && !filePath.contains("BuildConfig.class")) {
-                    serviceConfig.update(filePath)
+                if (isArtifactClass(filePath)) {
+                    serviceConfig.update(filePath, new FileInputStream(file))
                 }
             }
         } else {
-            serviceConfig.update(path)
+            serviceConfig.update(path, new FileInputStream(dir))
         }
+    }
+
+    boolean isArtifactClass(String fileName) {
+        return fileName.endsWith(".class") &&
+                !fileName.contains('R$') &&
+                !fileName.contains('R.class') &&
+                !fileName.contains("BuildConfig.class")
     }
 }

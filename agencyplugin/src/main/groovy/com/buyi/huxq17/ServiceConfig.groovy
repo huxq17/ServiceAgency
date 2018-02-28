@@ -16,7 +16,7 @@ public class ServiceConfig {
     private static final String SERVICE_CONFIG = "ServiceConfig"
     private List<String> contentList = new ArrayList<>()
     private ClassPool pool = ClassPool.default
-    private static final String SERVICE_AGENT_NAME = "@${ServiceAgent.name}"
+    private static final String SERVICE_AGENT_NAME = ServiceAgent.name
     private AgencyTransform transform
 
     ServiceConfig(Project project, AgencyTransform transform) {
@@ -27,13 +27,11 @@ public class ServiceConfig {
         pool.appendClassPath(path)
     }
 
-    void update(String filePath) {
+    void update(String fileName, InputStream classfile) {
 //        configFile.append("hello${System.getProperty("line.separator")}")
-        println "updateServiceConfig path=${filePath}"
+//        println "updateServiceConfig path=${fileName}"
 //        pool.appendClassPath(project.buildDir.toString()+"\\intermediates\\classes\\debug")
-//        pool.appendClassPath(project.android.bootClasspath[0].toString())
-//        pool.importPackage("android.support.annotation.AnyThread")
-        CtClass clazz = pool.makeClass(new FileInputStream(filePath))
+        CtClass clazz = pool.makeClass(classfile)
         if (!isService(clazz)) {
             return
         }
@@ -48,11 +46,24 @@ public class ServiceConfig {
     }
 
     boolean isService(CtClass clazz) {
-        Object[] annotations = clazz.getAnnotations()
-        println "annotation.length=" + annotations.length
-        if (annotations.any { annotation -> (annotation.toString() == SERVICE_AGENT_NAME) }) {
+        if (clazz.hasAnnotation(ServiceAgent.class)) {
+            println "class ${clazz.name} had annotate with $SERVICE_AGENT_NAME"
             return true
         }
+        /* 下面代码可以用来获取注解的值
+        AnnotationsAttribute attr = (AnnotationsAttribute) clazz.getClassFile().getAttribute(AnnotationsAttribute.invisibleTag)
+        if (attr == null) return false
+        Annotation annotation = attr.getAnnotation(SERVICE_AGENT_NAME)
+        if (annotation != null) {
+            println "class ${clazz.name} has $SERVICE_AGENT_NAME annotation"
+            return true
+        }
+      */
+
+//        Object[] annotations = clazz.getAnnotations()
+//        if (annotations.any { annotation -> (annotation.toString() == SERVICE_AGENT_NAME) }) {
+//            return true
+//        }
         return false
     }
 

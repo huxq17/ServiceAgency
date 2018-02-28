@@ -1,5 +1,5 @@
 package com.aiqing.videoplayer;
 
-public interface NetworkSevice {
+public interface NetworkService {
     void get(String url);
 }
