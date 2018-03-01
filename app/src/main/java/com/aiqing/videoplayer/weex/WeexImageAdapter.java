@@ -1,22 +1,22 @@
-package com.aiqing.videoplayer;
+package com.aiqing.videoplayer.weex;
 
 import android.text.TextUtils;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
-import com.taobao.weex.WXEnvironment;
+import com.aiqing.videoplayer.imageloader.ImageLoader;
+import com.buyi.huxq17.serviceagency.ServiceAgency;
 import com.taobao.weex.WXSDKManager;
 import com.taobao.weex.adapter.IWXImgLoaderAdapter;
 import com.taobao.weex.common.WXImageStrategy;
 import com.taobao.weex.dom.WXImageQuality;
 
-public class ImageAdapter implements IWXImgLoaderAdapter {
+public class WeexImageAdapter implements IWXImgLoaderAdapter {
     @Override
     public void setImage(final String url, final ImageView view, WXImageQuality quality, WXImageStrategy strategy) {
         WXSDKManager.getInstance().postOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(view==null||view.getLayoutParams()==null){
+                if (view == null || view.getLayoutParams() == null) {
                     return;
                 }
                 if (TextUtils.isEmpty(url)) {
@@ -30,10 +30,9 @@ public class ImageAdapter implements IWXImgLoaderAdapter {
                 if (view.getLayoutParams().width <= 0 || view.getLayoutParams().height <= 0) {
                     return;
                 }
-                Picasso.with(WXEnvironment.getApplication())
-                        .load(temp)
-                        .into(view);
+                ImageLoader imageLoader = ServiceAgency.getService(ImageLoader.class);
+                imageLoader.loadImage(temp, view);
             }
-        },0);
+        }, 0);
     }
 }

@@ -13,6 +13,7 @@ class AgencyTransform extends Transform {
     private Project mProject
     private ServiceConfig serviceConfig
     private File sourceDir
+    File classOutputDir
 
     File getSourceDir() {
         return sourceDir
@@ -41,8 +42,6 @@ class AgencyTransform extends Transform {
     boolean isIncremental() {
         return false
     }
-
-    File classOutputDir
 
     void transform(TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
         Context context = transformInvocation.getContext()

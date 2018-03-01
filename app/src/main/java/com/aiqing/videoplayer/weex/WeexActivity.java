@@ -1,4 +1,4 @@
-package com.aiqing.videoplayer;
+package com.aiqing.videoplayer.weex;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
