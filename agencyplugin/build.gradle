@@ -15,7 +15,6 @@ dependencies {
     compile 'com.squareup:javapoet:1.7.0'
     compile 'com.buyi.huxq17:serviceagency:1.0.0'
 }
-
 //group和version
 group = 'com.buyi.huxq17'
 version = '1.0.0'

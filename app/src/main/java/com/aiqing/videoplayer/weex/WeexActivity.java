@@ -1,5 +1,6 @@
 package com.aiqing.videoplayer.weex;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -13,7 +14,7 @@ import com.taobao.weex.utils.WXFileUtils;
 import java.util.Map;
 
 public abstract class WeexActivity extends AppCompatActivity implements IWXRenderListener {
-    private WXSDKInstance mWXSDKInstance;
+    protected WXSDKInstance mWXSDKInstance;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,6 +66,14 @@ public abstract class WeexActivity extends AppCompatActivity implements IWXRende
         super.onStop();
         if (mWXSDKInstance != null) {
             mWXSDKInstance.onActivityStop();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (mWXSDKInstance != null) {
+            mWXSDKInstance.onActivityResult(requestCode, resultCode, data);
         }
     }
 

@@ -1,6 +1,7 @@
 package com.aiqing.videoplayer;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 
 import com.aiqing.videoplayer.imageloader.ImageLoader;
 import com.aiqing.videoplayer.weex.WeexActivity;
@@ -23,6 +24,8 @@ public class MainActivity extends WeexActivity {
 //        jzVideoPlayerStandard.thumbImageView.setImage("http://p.qpic.cn/videoyun/0/2449_43b6f696980311e59ed467f22794e792_1/640");
         ImageLoader imageLoader = ServiceAgency.getService(ImageLoader.class);
         imageLoader.test("MainActivity onCreate");
+        //Release memory if need.
+        ServiceAgency.clear();
     }
 
     @Override
@@ -35,5 +38,10 @@ public class MainActivity extends WeexActivity {
         Map<String, Object> options = new HashMap<>();
         options.put(WXSDKInstance.BUNDLE_URL, "file://hello.js");
         return null;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

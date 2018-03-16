@@ -103,8 +103,8 @@ class AgencyTransform extends Transform {
             JarEntry entry = entries.nextElement()
             String fileName = entry.name
             if (isArtifactClass(fileName)) {
-                InputStream classfile = jarFile.getInputStream(entry)
-                serviceConfig.update(fileName, classfile)
+                InputStream jarInputStream = jarFile.getInputStream(entry)
+                serviceConfig.update(fileName, jarInputStream)
             }
         }
     }
