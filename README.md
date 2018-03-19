@@ -1,5 +1,5 @@
 # ServiceAgency
-
+[![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-ServiceAgency-green.svg?style=flat )]( https://android-arsenal.com/details/1/6853 )
 ## Introduction
 
 这是一个将接口和实现完全分离的gradle插件,适用于在使用第三方框架时进行解耦的场景。只需要在实现类上添加ServiceAgent注解，ServiceAgency会在项目构建阶段自动将实现和接口关联，开发者在使用的时候不需要传入实现，可以通过把ServiceAgent注解添加到另一个实现类上来达到快速替换实现的目的，具体看下面。
