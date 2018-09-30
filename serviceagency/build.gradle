@@ -15,17 +15,17 @@ jar {
     }
 }
 group = 'com.buyi.huxq17'
-version = '1.0.0'
-//uploadArchives {
-//    repositories {
-//        mavenDeployer {
-//            // repository(url: "http://www.xxx.com/repos") {
-//            //    authentication(userName: "admin", password: "admin")
-//            // }
-//            repository(url: uri('E:/repo'))
-//        }
-//    }
-//}
+version = VERSION_NAME
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            // repository(url: "http://www.xxx.com/repos") {
+            //    authentication(userName: "admin", password: "admin")
+            // }
+            repository(url: uri('E:/repo'))
+        }
+    }
+}
 ext {
     bintray_labels = ['java', 'jar']
 }

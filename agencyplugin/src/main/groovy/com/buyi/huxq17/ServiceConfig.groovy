@@ -18,13 +18,42 @@ public class ServiceConfig {
     private ClassPool pool = ClassPool.default
     private static final String SERVICE_AGENT_NAME = ServiceAgent.name
     private AgencyTransform transform
+    private File configFile
 
     ServiceConfig(Project project, AgencyTransform transform) {
         this.transform = transform
+        configFile = new File(project.buildDir, "\\intermediates\\transforms\\AgencyTransform\\ServiceAgency.cf")
+        if (!configFile.exists()) {
+            configFile.createNewFile()
+        }
+        configFile.eachLine { className ->
+            if (!contentList.contains(className)) {
+                contentList.add(className)
+            }
+        }
     }
 
     void addClassPath(String path) {
         pool.appendClassPath(path)
+    }
+
+    void update(File file) {
+        if (file.exists()) {
+            update(file.getName(), new FileInputStream(file))
+        } else {
+            String fileName = file.getName()
+            if (!fileName.endsWith(".class")) {
+                return
+            }
+            String className = fileName.split(".class")[0]
+            Iterator<String> iterator = contentList.iterator()
+            while (iterator.hasNext()) {
+                String next = iterator.next()
+                if ((next.endsWith(className))) {
+                    iterator.remove()
+                }
+            }
+        }
     }
 
     void update(String fileName, InputStream classfile) {
@@ -33,12 +62,13 @@ public class ServiceConfig {
 //        pool.appendClassPath(project.buildDir.toString()+"\\intermediates\\classes\\debug")
         CtClass clazz = pool.makeClass(classfile)
         if (!isService(clazz)) {
+            contentList.remove(clazz.name)
             return
         }
 //        if (clazz.isFrozen()) {
 //            clazz.defrost()
 //        }
-//        clazz.detach()
+        clazz.detach()
         String className = clazz.name
         if (!contentList.contains(className)) {
             contentList.add(className)
@@ -50,37 +80,27 @@ public class ServiceConfig {
             println "class ${clazz.name} had annotate with $SERVICE_AGENT_NAME"
             return true
         }
-        /* 下面代码可以用来获取注解的值
-        AnnotationsAttribute attr = (AnnotationsAttribute) clazz.getClassFile().getAttribute(AnnotationsAttribute.invisibleTag)
-        if (attr == null) return false
-        Annotation annotation = attr.getAnnotation(SERVICE_AGENT_NAME)
-        if (annotation != null) {
-            println "class ${clazz.name} has $SERVICE_AGENT_NAME annotation"
-            return true
-        }
-      */
-
-//        Object[] annotations = clazz.getAnnotations()
-//        if (annotations.any { annotation -> (annotation.toString() == SERVICE_AGENT_NAME) }) {
-//            return true
-//        }
         return false
     }
 
     void commit() {
-        String packageName = ServiceAgency.class.package.name
         if (contentList.size() == 0) {
-            transform.classOutputDir.delete()
+            if (configFile.exists())
+                configFile.delete()
             return
-        } else {
-            transform.classOutputDir.mkdirs()
         }
+        String packageName = ServiceAgency.class.package.name
+
         TypeSpec.Builder enmuBuild = TypeSpec.enumBuilder(SERVICE_CONFIG)
                 .addModifiers(Modifier.PUBLIC)
+        PrintWriter printWriter = configFile.newPrintWriter()
         contentList.each { line ->
+            printWriter.println(line)
             enmuBuild.addEnumConstant(line.replace('.', '_'), TypeSpec.anonymousClassBuilder("\$S", line)
                     .build())
         }
+        printWriter.flush()
+        printWriter.close()
         TypeSpec enmuType = enmuBuild.addField(String.class, "className", Modifier.PUBLIC, Modifier.FINAL)
                 .addMethod(MethodSpec.constructorBuilder()
                 .addParameter(String.class, "className")

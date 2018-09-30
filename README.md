@@ -14,7 +14,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.buyi.huxq17:agencyplugin:1.0.0'
+        classpath 'com.buyi.huxq17:agencyplugin:1.1.0'
     }
 }
 ```
@@ -22,9 +22,6 @@ App module build.gradle：
 
 ```
 apply plugin: 'service_agency'
-dependencies {
-    compile 'com.buyi.huxq17:serviceagency:1.0.0'
-}
 ```
 ## Example:
 ### Define interface and its implementation
@@ -59,6 +56,10 @@ public class ImageLoaderImpl implements ImageLoader {
    //Release memory if need.
    ServiceAgency.clear();
 ```
+
+## Change Logs<br/>
+    2018-9-30：
+    1.Support Instant Run and release v1.1.0.
 
 ## LICENSE
 

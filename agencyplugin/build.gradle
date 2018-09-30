@@ -11,20 +11,20 @@ dependencies {
 //    compile 'com.android.tools.build:transform-api:1.5.0'
     compile 'org.javassist:javassist:3.20.0-GA'
     compile 'commons-io:commons-io:2.5'
-    compile 'com.android.tools.build:gradle:3.0.1'
-    compile 'com.squareup:javapoet:1.7.0'
-    compile 'com.buyi.huxq17:serviceagency:1.0.0'
+    compile 'com.android.tools.build:gradle:3.2.0'
+    compile 'com.squareup:javapoet:1.9.0'
+    compile "com.buyi.huxq17:serviceagency:${VERSION_NAME}"
 }
 //group和version
 group = 'com.buyi.huxq17'
-version = '1.0.0'
-//uploadArchives {
-//    repositories {
-//        mavenDeployer {
-//            repository(url: uri('E:/repo'))
-//        }
-//    }
-//}
+version = VERSION_NAME
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri('E:/repo'))
+        }
+    }
+}
 ext {
     bintray_labels = ['gradle', 'plugin']
 }

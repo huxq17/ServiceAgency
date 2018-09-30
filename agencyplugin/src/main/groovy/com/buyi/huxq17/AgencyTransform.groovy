@@ -40,41 +40,45 @@ class AgencyTransform extends Transform {
 
     @Override
     boolean isIncremental() {
-        return false
+        return true
     }
 
     void transform(TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
         Context context = transformInvocation.getContext()
         initServiceConfig(context.variantName)
         Collection<TransformInput> inputs = transformInvocation.getInputs()
-        Collection<TransformInput> referencedInputs = transformInvocation.getReferencedInputs()
+//        Collection<TransformInput> referencedInputs = transformInvocation.getReferencedInputs()
         TransformOutputProvider outputProvider = transformInvocation.getOutputProvider()
-        classOutputDir = outputProvider.getContentLocation("serviceagency", getOutputTypes(), getScopes(), Format.DIRECTORY)
-        if (classOutputDir.exists()) {
-            FileUtils.deleteDirectory(classOutputDir)
-        }
+//        classOutputDir = outputProvider.getContentLocation("serviceagency", getOutputTypes(), getScopes(), Format.DIRECTORY)
+
         inputs.each { TransformInput input ->
-            input.directoryInputs.each { DirectoryInput directoryInput ->
-                println "classOutputDir=$classOutputDir;$directoryInput.name"
-                loadDirectory(directoryInput.file.absolutePath)
-                def dest = outputProvider.getContentLocation(directoryInput.name,
-                        directoryInput.contentTypes, directoryInput.scopes,
-                        Format.DIRECTORY)
-                FileUtils.copyDirectory(directoryInput.file, dest)
-            }
             input.jarInputs.each { JarInput jarInput ->
                 def jarName = jarInput.name
                 def md5Name = DigestUtils.md5Hex(jarInput.file.getAbsolutePath())
                 if (jarName.endsWith(".jar")) {
                     jarName = jarName.substring(0, jarName.length() - 4)
                 }
+                jarInput.status
                 loadJar(jarInput.file)
                 def dest = outputProvider.getContentLocation(jarName + md5Name,
                         jarInput.contentTypes, jarInput.scopes, Format.JAR)
                 FileUtils.copyFile(jarInput.file, dest)
             }
-        }
+            input.directoryInputs.each { DirectoryInput directoryInput ->
+                Map<File, Status> changedFiles = directoryInput.changedFiles
+                if (changedFiles == null || changedFiles.isEmpty()) {
+                    loadDirectory(directoryInput.file.absolutePath)
+                } else {
+                    loadChangeFiles(changedFiles)
+                }
 
+                def dest = outputProvider.getContentLocation(directoryInput.name,
+                        directoryInput.contentTypes, directoryInput.scopes,
+                        Format.DIRECTORY)
+                classOutputDir = dest
+                FileUtils.copyDirectory(directoryInput.file, dest)
+            }
+        }
         serviceConfig.commit()
     }
 
@@ -95,6 +99,33 @@ class AgencyTransform extends Transform {
         }
     }
 
+    void loadChangeFiles(Map<File, Status> changedFiles) {
+        changedFiles.keySet().each { file ->
+            serviceConfig.update(file)
+        }
+    }
+
+    void loadDirectory(String path) {
+        File dir = new File(path)
+        serviceConfig.addClassPath(path)
+        if (dir.isDirectory()) {
+            dir.eachFileRecurse { File file ->
+                loadJarOrClass(file)
+            }
+        } else {
+            loadJarOrClass(dir)
+        }
+    }
+
+    void loadJarOrClass(File file) {
+        String fileName = file.name
+        if (isArtifactClass(fileName)) {
+            serviceConfig.update(fileName, new FileInputStream(file))
+        } else if (fileName.endsWith(".jar")) {
+            loadJar(file)
+        }
+    }
+
     void loadJar(File jar) {
         serviceConfig.addClassPath(jar.absolutePath)
         JarFile jarFile = new JarFile(jar)
@@ -106,21 +137,6 @@ class AgencyTransform extends Transform {
                 InputStream jarInputStream = jarFile.getInputStream(entry)
                 serviceConfig.update(fileName, jarInputStream)
             }
-        }
-    }
-
-    void loadDirectory(String path) {
-        File dir = new File(path)
-        serviceConfig.addClassPath(path)
-        if (dir.isDirectory()) {
-            dir.eachFileRecurse { File file ->
-                String filePath = file.absolutePath
-                if (isArtifactClass(filePath)) {
-                    serviceConfig.update(filePath, new FileInputStream(file))
-                }
-            }
-        } else {
-            serviceConfig.update(path, new FileInputStream(dir))
         }
     }
 

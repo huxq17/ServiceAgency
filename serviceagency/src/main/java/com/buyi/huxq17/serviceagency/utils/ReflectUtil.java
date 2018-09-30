@@ -1,7 +1,7 @@
 package com.buyi.huxq17.serviceagency.utils;
 
 
-import com.buyi.huxq17.serviceagency.AgencyException;
+import com.buyi.huxq17.serviceagency.exception.AgencyException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -22,7 +22,7 @@ public class ReflectUtil {
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
-            throw new AgencyException("Do not do strange operation in the constructor");
+            throw new AgencyException("Do not do strange operation in the constructor.");
         }
         return instance;
     }
