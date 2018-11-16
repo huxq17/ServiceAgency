@@ -3,16 +3,16 @@
 buildscript {
 
     repositories {
-//        maven {
-//            url 'E:/repo'
-//        }
+        maven {
+            url 'E:/repo'
+        }
         mavenCentral()
         jcenter()
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0'
-        classpath "com.buyi.huxq17:agencyplugin:${VERSION_NAME}"
+        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath "com.buyi.huxq17:agencyplugin:1.1.2"
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
         classpath 'com.github.dcendents:android-maven-plugin:1.2'
         // NOTE: Do not place your application dependencies here; they belong
@@ -22,9 +22,9 @@ buildscript {
 
 allprojects {
     repositories {
-//        maven {
-//            url 'E:/repo'
-//        }
+        maven {
+            url 'E:/repo'
+        }
         mavenLocal()
         google()
         jcenter()

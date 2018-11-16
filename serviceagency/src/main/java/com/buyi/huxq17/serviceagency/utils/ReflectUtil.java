@@ -22,6 +22,7 @@ public class ReflectUtil {
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
+            e.printStackTrace();
             throw new AgencyException("Do not do strange operation in the constructor.");
         }
         return instance;

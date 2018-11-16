@@ -63,16 +63,16 @@ public class ServiceConfig {
         CtClass clazz = pool.makeClass(classfile)
         if (!isService(clazz)) {
             contentList.remove(clazz.name)
-            return
+        } else {
+            String className = clazz.name
+            if (!contentList.contains(className)) {
+                contentList.add(className)
+            }
         }
 //        if (clazz.isFrozen()) {
 //            clazz.defrost()
 //        }
         clazz.detach()
-        String className = clazz.name
-        if (!contentList.contains(className)) {
-            contentList.add(className)
-        }
     }
 
     boolean isService(CtClass clazz) {
@@ -84,12 +84,17 @@ public class ServiceConfig {
     }
 
     void commit() {
+        String packageName = ServiceAgency.class.package.name
+        def sourceDir = transform.sourceDir
+        String fileName = "${packageName.replaceAll("\\.", "/")}/${SERVICE_CONFIG}.java"
+        File sourceFile = new File(sourceDir, fileName)
         if (contentList.size() == 0) {
             if (configFile.exists())
                 configFile.delete()
+            if(sourceFile.exists())
+                sourceFile.delete()
             return
         }
-        String packageName = ServiceAgency.class.package.name
 
         TypeSpec.Builder enmuBuild = TypeSpec.enumBuilder(SERVICE_CONFIG)
                 .addModifiers(Modifier.PUBLIC)
@@ -108,9 +113,6 @@ public class ServiceConfig {
                 .build())
                 .build()
 
-        def sourceDir = transform.sourceDir
-        String fileName = "${packageName.replaceAll("\\.", "/")}/${SERVICE_CONFIG}.java"
-        File sourceFile = new File(sourceDir, fileName)
         JavaFile javaFile = JavaFile.builder(packageName, enmuType).build()
         javaFile.writeTo(sourceDir)
         JavaCompilerUtil.CompilerJavaFile(sourceFile, transform.classOutputDir.absolutePath)

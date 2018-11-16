@@ -10,7 +10,7 @@ public class AgencyPlugin implements Plugin<Project> {
     void apply(Project project) {
         if (project.plugins.hasPlugin(AppPlugin)) {
             project.dependencies {
-                implementation "com.buyi.huxq17:serviceagency:1.1.0"
+                implementation "com.buyi.huxq17:serviceagency:1.1.2"
             }
             registerTransform(project, project.extensions.getByType(AppExtension))
         }
