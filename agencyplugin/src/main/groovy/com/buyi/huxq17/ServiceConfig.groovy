@@ -9,6 +9,7 @@ import javassist.ClassPool
 import javassist.CtClass
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
+import org.gradle.internal.impldep.org.codehaus.plexus.util.IOUtil
 
 import javax.lang.model.element.Modifier
 
@@ -73,6 +74,14 @@ public class ServiceConfig {
 //            clazz.defrost()
 //        }
         clazz.detach()
+        if (classfile != null) {
+            try {
+                classfile.close()
+            } catch (IOException var2) {
+
+            }
+
+        }
     }
 
     boolean isService(CtClass clazz) {

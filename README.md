@@ -14,7 +14,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.buyi.huxq17:agencyplugin:1.1.2'
+        classpath 'com.buyi.huxq17:agencyplugin:1.1.3'
     }
 }
 ```
@@ -58,6 +58,8 @@ public class ImageLoaderImpl implements ImageLoader {
 ```
 
 ## Change Logs<br/>
+    2019-4-4：
+    1.Fix bugs,release v1.1.3.
     2018-11-16：
     1.Fix bugs,release v1.1.2.
     2018-9-30：

@@ -11,9 +11,9 @@ dependencies {
 //    compile 'com.android.tools.build:transform-api:1.5.0'
     compile 'org.javassist:javassist:3.20.0-GA'
     compile 'commons-io:commons-io:2.5'
-    compile 'com.android.tools.build:gradle:3.2.1'
+    compile 'com.android.tools.build:gradle:3.3.2'
     compile 'com.squareup:javapoet:1.9.0'
-    compile "com.buyi.huxq17:serviceagency:1.1.2"
+    compile "com.buyi.huxq17:serviceagency:1.1.3"
 }
 //group和version
 group = 'com.buyi.huxq17'
@@ -21,7 +21,7 @@ version = VERSION_NAME
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url: uri('E:/repo'))
+            repository(url: uri('../../../repo'))
         }
     }
 }

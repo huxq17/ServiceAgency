@@ -22,7 +22,7 @@ uploadArchives {
             // repository(url: "http://www.xxx.com/repos") {
             //    authentication(userName: "admin", password: "admin")
             // }
-            repository(url: uri('E:/repo'))
+            repository(url: uri('../../../repo'))
         }
     }
 }
