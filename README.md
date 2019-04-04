@@ -58,7 +58,7 @@ public class ImageLoaderImpl implements ImageLoader {
 ```
 
 ## Change Logs<br/>
-    2018-9-30：
+    2018-11-16：
     1.Fix bugs,release v1.1.2.
     2018-9-30：
     1.Support Instant Run and release v1.1.0.
