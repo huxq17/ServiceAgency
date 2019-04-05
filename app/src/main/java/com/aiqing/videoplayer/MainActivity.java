@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import com.aiqing.videoplayer.imageloader.ImageLoader;
+import com.aiqing.videoplayer.network.INetworkClient;
 import com.aiqing.videoplayer.weex.WeexActivity;
 import com.buyi.huxq17.serviceagency.ServiceAgency;
 import com.taobao.weex.WXSDKInstance;
@@ -22,8 +23,15 @@ public class MainActivity extends WeexActivity {
 //                , JZVideoPlayerStandard.SCREEN_WINDOW_NORMAL, "");
 //        player.setUp();
 //        jzVideoPlayerStandard.thumbImageView.setImage("http://p.qpic.cn/videoyun/0/2449_43b6f696980311e59ed467f22794e792_1/640");
-        ImageLoader imageLoader = ServiceAgency.getService(ImageLoader.class);
+        ImageLoader imageLoader = ServiceAgency.getService(this,ImageLoader.class);
+        //getServiceWithoutCache will not cache service's instance.
+//        ImageLoader imageLoader = ServiceAgency.getServiceWithoutCache(this,ImageLoader.class);
         imageLoader.test("MainActivity onCreate");
+
+        //OR
+
+        INetworkClient networkClient = ServiceAgency.getService(INetworkClient.class);
+        networkClient.get();
         //Release memory if need.
         ServiceAgency.clear();
     }

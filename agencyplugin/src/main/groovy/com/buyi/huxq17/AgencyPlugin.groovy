@@ -1,6 +1,6 @@
 package com.buyi.huxq17
 
-import com.android.build.gradle.AppExtension
+
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
 import org.gradle.api.Plugin
@@ -9,10 +9,18 @@ import org.gradle.api.Project
 public class AgencyPlugin implements Plugin<Project> {
     void apply(Project project) {
         if (project.plugins.hasPlugin(AppPlugin)) {
-            project.dependencies {
-                implementation "com.buyi.huxq17:serviceagency:1.1.3"
+            if (project.plugins.hasPlugin("kotlin-android")) {
+                project.dependencies {
+                    implementation "com.buyi.huxq17:serviceagency:1.2.0"
+                    kapt "com.buyi.huxq17:processor:1.2.0"
+                }
+            } else {
+                project.dependencies {
+                    implementation "com.buyi.huxq17:serviceagency:1.2.0"
+                    annotationProcessor "com.buyi.huxq17:processor:1.2.0"
+                }
             }
-            registerTransform(project, project.extensions.getByType(AppExtension))
+//            registerTransform(project, project.extensions.getByType(AppExtension))
         }
     }
 

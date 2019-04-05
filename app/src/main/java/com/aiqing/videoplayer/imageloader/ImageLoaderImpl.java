@@ -1,20 +1,27 @@
 package com.aiqing.videoplayer.imageloader;
 
+import android.content.Context;
 import android.widget.ImageView;
 
 import com.buyi.huxq17.serviceagency.annotation.ServiceAgent;
 import com.squareup.picasso.Picasso;
-import com.taobao.weex.WXEnvironment;
 
 @ServiceAgent
 public class ImageLoaderImpl implements ImageLoader {
+    private Context context;
+
     private ImageLoaderImpl() {
 //        throw new AssertionError();
     }
 
     @Override
+    public void init(Context context) {
+        this.context = context.getApplicationContext();
+    }
+
+    @Override
     public void loadImage(String url, ImageView imageview) {
-        Picasso.with(WXEnvironment.getApplication()).load(url).into(imageview);
+        Picasso.with(context).load(url).into(imageview);
     }
 
     @Override

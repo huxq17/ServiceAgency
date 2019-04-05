@@ -14,7 +14,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.buyi.huxq17:agencyplugin:1.1.3'
+        classpath 'com.buyi.huxq17:agencyplugin:1.2.0'
     }
 }
 ```
@@ -50,14 +50,20 @@ public class ImageLoaderImpl implements ImageLoader {
 ### Usage：
 
 ```
-   ImageLoader imageLoader = ServiceAgency.getService(ImageLoader.class);
-   imageLoader.loadImage(imageview, view);
-   
-   //Release memory if need.
-   ServiceAgency.clear();
+   ImageLoader imageLoader = ServiceAgency.getService(this,ImageLoader.class);
+          //getServiceWithoutCache will not cache service's instance.
+          //ImageLoader imageLoader = ServiceAgency.getServiceWithoutCache(this,ImageLoader.class);
+          imageLoader.test("MainActivity onCreate");
+          //OR
+          INetworkClient networkClient = ServiceAgency.getService(INetworkClient.class);
+          networkClient.get();
+          //Release memory if need.
+          ServiceAgency.clear();
 ```
 
 ## Change Logs<br/>
+    2019-4-5：
+    1.Add getService(Context, Class<T>) and getServiceWithoutCache(Context, Class<T>) method,release v1.2.0.
     2019-4-4：
     1.Fix bugs,release v1.1.3.
     2018-11-16：

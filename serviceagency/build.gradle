@@ -12,6 +12,7 @@ jar {
 //    }
     exclude {
         it.name == "ServiceConfig.class"
+
     }
 }
 group = 'com.buyi.huxq17'

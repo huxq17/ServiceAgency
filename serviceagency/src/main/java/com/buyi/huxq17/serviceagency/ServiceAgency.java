@@ -1,5 +1,7 @@
 package com.buyi.huxq17.serviceagency;
 
+import android.content.Context;
+
 import com.buyi.huxq17.serviceagency.exception.AgencyException;
 import com.buyi.huxq17.serviceagency.utils.ReflectUtil;
 
@@ -16,7 +18,26 @@ public class ServiceAgency {
 
     @SuppressWarnings("unchecked")
     public static <T> T getService(Class<T> tClass) {
-        return InstanceHolder.instance.getServiceFromMap(tClass);
+        return InstanceHolder.instance.getServiceFromMap(tClass, true);
+    }
+
+    public static <T extends IService> T getService(Context context, Class<T> tClass) {
+        T instance = InstanceHolder.instance.getServiceFromMap(tClass, true);
+        instance.init(context);
+        return instance;
+    }
+
+    /**
+     * will not cache service's instance.
+     * @param context Context
+     * @param tClass Service class
+     * @param <T> Service type
+     * @return Service instance
+     */
+    public static <T extends IService> T getServiceWithoutCache(Context context, Class<T> tClass) {
+        T instance = InstanceHolder.instance.getServiceFromMap(tClass, false);
+        instance.init(context);
+        return instance;
     }
 
     public static void clear() {
@@ -24,7 +45,7 @@ public class ServiceAgency {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getServiceFromMap(Class<T> tClass) {
+    public <T> T getServiceFromMap(Class<T> tClass, boolean isFromMap) {
         if (!isServiceConfigExists) {
             try {
                 Class.forName("com.buyi.huxq17.serviceagency.ServiceConfig");
@@ -33,7 +54,10 @@ public class ServiceAgency {
                 throw new com.buyi.huxq17.serviceagency.exception.AgencyException("No class annotate with ServiceAgent.");
             }
         }
-        T service = (T) cacheMap.get(tClass);
+        T service = null;
+        if (isFromMap) {
+            service = (T) cacheMap.get(tClass);
+        }
         if (service == null) {
 
             for (ServiceConfig serviceEnum : ServiceConfig.values()) {
@@ -41,7 +65,9 @@ public class ServiceAgency {
                     Class serviceClass = Class.forName(serviceEnum.className);
                     if (tClass.isAssignableFrom(serviceClass)) {
                         service = ReflectUtil.newInstance((Class<T>) serviceClass);
-                        cacheMap.put(tClass, service);
+                        if (isFromMap) {
+                            cacheMap.put(tClass, service);
+                        }
                         return service;
                     }
                 } catch (ClassNotFoundException e) {
